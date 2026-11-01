@@ -1,0 +1,6 @@
+{
+  "name": "agentic-project-grooming-plugin",
+  "description": "Interactive project grooming, requirement clarification, and workspace scaffolding plugin.",
+  "version": "0.1.0",
+  "license": "MIT"
+}

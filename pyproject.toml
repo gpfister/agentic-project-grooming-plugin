@@ -1,0 +1,18 @@
+[project]
+name = "agentic-project-grooming-plugin"
+version = "0.1.0"
+description = "Interactive project grooming, requirement clarification, and workspace scaffolding plugin."
+readme = "README.md"
+license = "MIT"
+authors = [
+    { name = "Greg PFISTER", email = "gregory.pfister@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.10.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+]
