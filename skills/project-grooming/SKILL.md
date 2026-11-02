@@ -26,7 +26,7 @@ flowchart TD
     CodingCheck -->|"Yes"| InvokeCoding["Invoke @coding<br/>(Scaffold repos, Makefile, scripts, code)"]
     CodingCheck -->|"No"| FallbackCoding["Local Scaffolding Fallback<br/>(Direct file generation)"]
     
-    InvokeCoding --> DocCheck{"agentic-document-plugin<br/>installed?"}
+    InvokeCoding --> DocCheck{"agentic-project-documenting-plugin<br/>installed?"}
     FallbackCoding --> DocCheck
     
     DocCheck -->|"Yes"| InvokeDoc["Invoke @coding-document<br/>(Init Obsidian vault, architecture notes, ADRs)"]
@@ -141,7 +141,7 @@ Once `Project_Request_Grooming.md` is approved, execute or delegate scaffolding 
   - Create `.gitignore`, `LICENSE`, `Makefile`, and base config files directly.
 
 #### 2. Documentation Delegation (`@coding-document`)
-- **Detection**: Check if `agentic-document-plugin` is installed in the workspace.
+- **Detection**: Check if `agentic-project-documenting-plugin` is installed in the workspace.
 - **If Installed**:
   - Invoke `@coding-document`:
     ```python

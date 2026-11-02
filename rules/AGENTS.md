@@ -48,7 +48,7 @@ When `Project_Request_Grooming.md` is approved, coordinate with companion plugin
     - **Installed**: Invoke `@coding` via `invoke_subagent(TypeName="coding", Role="Coding Workflow Orchestrator", Prompt=...)` to generate repositories, Makefile, scripts, licensing, and boilerplate code according to the approved grooming artifact.
     - **Not Installed**: Execute local fallback scaffolding directly or provide manual scaffolding guidance.
 - **Documentation Archival Delegation (`@coding-document`)**:
-  - Check if `agentic-document-plugin` is installed:
+  - Check if `agentic-project-documenting-plugin` is installed:
     - **Installed**: Invoke `@coding-document` via `invoke_subagent(TypeName="coding-document", Role="Documentation Specialist", Prompt=...)` to initialize the `<project>-obsidian/` knowledge vault, document architecture designs, and index initial ADRs.
     - **Not Installed**: Generate local markdown documentation templates directly in the workspace.
 

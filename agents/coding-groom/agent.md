@@ -57,5 +57,5 @@ Your mission is to perform comprehensive gap analysis on workspaces, interrogate
   - If `agentic-coding-plugin` is installed: invoke `@coding` via `invoke_subagent(TypeName="coding", Role="Coding Workflow Orchestrator", Prompt=...)` to scaffold repositories, Makefile, scripts, licensing, and code templates according to `Project_Request_Grooming.md`.
   - If not installed: execute local scaffolding fallback.
 - **Documentation Archival Delegation (`@coding-document`)**:
-  - If `agentic-document-plugin` is installed: invoke `@coding-document` via `invoke_subagent(TypeName="coding-document", Role="Documentation Specialist", Prompt=...)` to initialize `<project>-obsidian/` vault, index architecture designs, and create ADRs.
+  - If `agentic-project-documenting-plugin` is installed: invoke `@coding-document` via `invoke_subagent(TypeName="coding-document", Role="Documentation Specialist", Prompt=...)` to initialize `<project>-obsidian/` vault, index architecture designs, and create ADRs.
   - If not installed: generate local documentation templates.

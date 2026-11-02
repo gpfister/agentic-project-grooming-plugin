@@ -61,7 +61,7 @@ def test_rules_exist():
     assert "Project_Request_Grooming.md" in content
     assert "one question at a time" in content.lower()
     assert "agentic-coding-plugin" in content
-    assert "agentic-document-plugin" in content
+    assert "agentic-project-documenting-plugin" in content
 
 
 def test_skill_exists():

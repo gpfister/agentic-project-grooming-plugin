@@ -77,7 +77,7 @@ flowchart TD
 | Companion Plugin | Integration Target | Behavior when Installed | Graceful Standalone Fallback |
 | :--- | :--- | :--- | :--- |
 | **`agentic-coding-plugin`** | `@coding` | Invokes `@coding` to initialize git sub-repos, create `Makefile`, author automation scripts, apply licensing, and scaffold boilerplate code according to `Project_Request_Grooming.md`. | Executes direct local scaffolding of root files, manifests, `.gitignore`, and `Makefile`. |
-| **`agentic-document-plugin`** | `@coding-document` | Invokes `@coding-document` to initialize the `<project>-obsidian/` knowledge vault, document architecture designs, and seed initial ADRs. | Creates standard markdown documentation under `docs/` or `<project>-obsidian/` with initial architecture notes and ADR templates. |
+| **`agentic-project-documenting-plugin`** | `@coding-document` | Invokes `@coding-document` to initialize the `<project>-obsidian/` knowledge vault, document architecture designs, and seed initial ADRs. | Creates standard markdown documentation under `docs/` or `<project>-obsidian/` with initial architecture notes and ADR templates. |
 
 ---
 
