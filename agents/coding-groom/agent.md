@@ -34,7 +34,22 @@ Your mission is to perform comprehensive gap analysis on workspaces, interrogate
 
 ### 2. Consistency & User Grilling (Step 2)
 - Grill the user rigorously to eradicate all ambiguities.
-- **Strict Rule**: Always ask **strictly one question at a time** using `ask_question`. Never ask compound questions.
+- **Strict Rule**: Always ask **strictly one question at a time**. Never ask compound questions.
+- **Dual-Mode Interrogation (Question Relay Protocol)**:
+  - **Standalone Root Agent**: When operating directly as the root conversational agent with the user, invoke `ask_question` directly.
+  - **Delegated Subagent Mode**: When invoked as a subagent under a caller orchestrator (e.g. `@coding`):
+    * Relay questions strictly one at a time via `send_message` to the caller using the `[QUESTION_RELAY_REQUEST]` envelope:
+      ```text
+      [QUESTION_RELAY_REQUEST]
+      Question: <Precise question text>
+      Options: <Optional list of choices or 'Free text'>
+      Context: <Brief explanation of why this question is being asked>
+      ```
+    * Await caller response envelope before moving to the next question or subsequent dimension:
+      ```text
+      [QUESTION_RELAY_RESPONSE]
+      Answer: <User's response relayed by caller>
+      ```
 - Address all 7 core dimensions:
   1. Project Identification (name, tagline, purpose)
   2. Goals & Target Audience (personas, key user journeys, MVP boundary)

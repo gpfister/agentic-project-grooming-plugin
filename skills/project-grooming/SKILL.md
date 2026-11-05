@@ -14,7 +14,7 @@ The `project-grooming` skill guides users through an interactive, rigorous proje
 ```mermaid
 flowchart TD
     Start(["Start Project Grooming"]) --> Step1["Step 1: Gap Analysis<br/>(Inspect files, git topology, manifests, licenses)"]
-    Step1 --> Step2["Step 2: Consistency & User Grilling<br/>(ask_question strictly one question at a time across 7 dimensions)"]
+    Step1 --> Step2["Step 2: Consistency & User Grilling<br/>(Strictly one question at a time across 7 dimensions<br/>Direct ask_question or Question Relay Protocol)"]
     Step2 --> MoreQuestions{"Ambiguities or<br/>Gaps Remaining?"}
     MoreQuestions -->|"Yes"| Step2
     MoreQuestions -->|"No"| Step3["Step 3: Approval Gate Artifact<br/>(Write Project_Request_Grooming.md<br/>RequestFeedback=True, sole tool call)"]
@@ -65,8 +65,30 @@ Before interacting with the user, perform a fast, non-destructive audit of the w
 Engage the user in an iterative interrogation, grilling relentlessly until every ambiguity is resolved.
 
 > [!IMPORTANT]
-> **Strict Rule**: Always ask **strictly one question at a time** using `ask_question`. Never ask composite or multi-part questions in a single turn.
+> **Strict Rule**: Always ask **strictly one question at a time**. Never ask composite or multi-part questions in a single turn.
 
+#### Dual-Mode Interrogation (Question Relay Protocol)
+To ensure reliable operation whether invoked standalone or delegated under an orchestrator subagent, project grooming supports two interrogation modes:
+
+1. **Standalone Root Agent Mode**:
+   - When running directly as the root conversational agent with the user, call `ask_question` directly for each inquiry.
+2. **Delegated Subagent Mode (Question Relay Protocol)**:
+   - When invoked as a subagent under a caller orchestrator (e.g. `@coding`):
+     * Do NOT call `ask_question` directly, ensuring orchestrator conversational flow and approval context remain unified.
+     * Relay questions strictly one at a time via `send_message` to the caller using the `[QUESTION_RELAY_REQUEST]` envelope:
+       ```text
+       [QUESTION_RELAY_REQUEST]
+       Question: <Precise question text>
+       Options: <Optional list of choices or 'Free text'>
+       Context: <Brief explanation of why this question is being asked>
+       ```
+     * Await the response envelope from the caller before moving to the next question or subsequent dimension:
+       ```text
+       [QUESTION_RELAY_RESPONSE]
+       Answer: <User's response relayed by caller>
+       ```
+
+#### 7 Core Dimensions for Interrogation
 Interrogate across the **7 Core Dimensions**:
 
 1. **Project Identification**:

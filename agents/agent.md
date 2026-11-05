@@ -33,21 +33,23 @@ agents/
 
 | Agent Handle | Directory | `enable_write_tools` | `enable_subagent_tools` | `enable_mcp_tools` | Allowed Tools | Description |
 | :--- | :--- | :---: | :---: | :---: | :--- | :--- |
-| **`@coding-groom`** | [`agents/coding-groom/`](file:///Users/gpfister/Development/Projects/gpfister/agentic/agentic-project-grooming-plugin/agents/coding-groom/) | `True` | `True` | `True` | `read_file`, `list_dir`, `run_command`, `ask_question`, `write_file`, `invoke_subagent`, `send_message` | Interactive project grooming specialist auditing repositories, grilling users one question at a time across 7 dimensions, writing `Project_Request_Grooming.md` approval artifacts, and delegating scaffolding to `@coding` and `@coding-document`. |
+| **`@coding-groom`** | [`agents/coding-groom/`](file:///Users/gpfister/Development/Projects/gpfister/agentic/agentic-project-grooming-plugin/agents/coding-groom/) | `True` | `True` | `True` | `read_file`, `list_dir`, `run_command`, `ask_question`, `write_file`, `invoke_subagent`, `send_message` | Interactive project grooming specialist auditing repositories, grilling users one question at a time across 7 dimensions (via direct `ask_question` when standalone, or Question Relay Protocol `[QUESTION_RELAY_REQUEST]` / `[QUESTION_RELAY_RESPONSE]` when delegated), writing `Project_Request_Grooming.md` approval artifacts, and delegating scaffolding to `@coding` and `@coding-document`. |
 
 ---
 
 ## 3. Project Grooming & Delegation Pipeline
 
 ```text
-Gap Analysis (Step 1) ──> User Grilling (Step 2) ──(ask_question, 1 at a time)──┐
-                                  ▲                                               │
-                                  │                                               ▼
-                              (Revisions) <─────────────── Write Project_Request_Grooming.md (Step 3)
-                                                                                  │
-                                                                           [Gate Approved]
-                                                                                  ▼
-                                                                     Scaffolding Delegation (Step 4)
-                                                                     ├── @coding (scaffolding code/repos)
-                                                                     └── @coding-document (vault/ADRs)
+Gap Analysis (Step 1) ──> User Grilling (Step 2) ──────────────────────────────┐
+                           (Standalone: direct ask_question 1 at a time)        │
+                           (Subagent: [QUESTION_RELAY_REQUEST] via send_message)│
+                                  ▲                                             │
+                                  │                                             ▼
+                              (Revisions) <────────────── Write Project_Request_Grooming.md (Step 3)
+                                                                                │
+                                                                         [Gate Approved]
+                                                                                ▼
+                                                                   Scaffolding Delegation (Step 4)
+                                                                   ├── @coding (scaffolding code/repos)
+                                                                   └── @coding-document (vault/ADRs)
 ```

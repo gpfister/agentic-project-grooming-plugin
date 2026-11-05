@@ -14,7 +14,7 @@ Interactive project grooming, requirement clarification, repository gap analysis
 
 - **Declarative Subagent (`@coding-groom`)**: Dedicated grooming specialist configured in [`agents/coding-groom/agent.md`](file:///Users/gpfister/Development/Projects/gpfister/agentic/agentic-project-grooming-plugin/agents/coding-groom/agent.md) (aliases: `@coding-groom`, `@coding-project-grooming`).
 - **Progressive Skill (`project-grooming`)**: Comprehensive 4-step workflow defined in [`skills/project-grooming/SKILL.md`](file:///Users/gpfister/Development/Projects/gpfister/agentic/agentic-project-grooming-plugin/skills/project-grooming/SKILL.md).
-- **Matt Pocock Style Grilling**: Strictly **one question at a time** via `ask_question`, drilling into assumptions, edge cases, and architectural specifics.
+- **Matt Pocock Style Grilling**: Strictly **one question at a time** via direct `ask_question` (when standalone) or Question Relay Protocol via `send_message` (when invoked as a delegated subagent), drilling into assumptions, edge cases, and architectural specifics.
 - **7-Dimension Scope Analysis**:
   1. **Project Identification**: Name, tagline, and core problem statement.
   2. **Goals & Target Audience**: User personas, core user journeys, MVP boundaries.

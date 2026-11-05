@@ -18,7 +18,18 @@ This rule set applies whenever the `agentic-project-grooming-plugin` is active i
 ---
 
 ## 2. Interactive User Interrogation (Matt Pocock Style Grilling)
-- **One Question at a Time**: When asking for user clarification, always use `ask_question` asking strictly **one question at a time**. Never combine multiple inquiries into a single turn.
+- **One Question at a Time**: When asking for user clarification, ask strictly **one question at a time**. Never combine multiple inquiries into a single turn.
+- **Dual-Mode Interrogation (Question Relay Protocol)**:
+  - **Standalone Root Agent**: When interacting directly as the root conversational agent with the user, use `ask_question` directly.
+  - **Delegated Subagent Mode**: When operating as a delegated subagent under a caller orchestrator (e.g. `@coding`):
+    * Relay questions strictly one at a time via `send_message` with:
+      ```text
+      [QUESTION_RELAY_REQUEST]
+      Question: <Precise question text>
+      Options: <Optional list of choices or 'Free text'>
+      Context: <Brief explanation of why this question is being asked>
+      ```
+    * Await `[QUESTION_RELAY_RESPONSE]\nAnswer: ...` from the caller before moving to the next dimension or next question.
 - **Relentless Deep Clarification**: Interrogate vague, ambiguous, or incomplete requirements. Challenge assumptions and clarify edge cases until the project requirements are concrete across the 7 core dimensions:
   1. **Project Identification**: Official project name, tagline, core purpose, and problem statement.
   2. **Goals & Target Audience**: End-user personas, key pain points addressed, expected user outcomes, and value proposition.

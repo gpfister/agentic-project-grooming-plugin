@@ -96,3 +96,47 @@ def test_central_agent_guide_exists():
     content = central_file.read_text(encoding="utf-8")
     assert "name: coding-groom-catalog" in content
     assert "# Coding - Project Grooming Subagents & Architecture" in content
+
+
+def test_question_relay_protocol_in_rules():
+    rules_file = PLUGIN_ROOT / "rules" / "AGENTS.md"
+    content = rules_file.read_text(encoding="utf-8")
+    assert "[QUESTION_RELAY_REQUEST]" in content
+    assert "[QUESTION_RELAY_RESPONSE]" in content
+    assert "Question:" in content
+    assert "Options:" in content
+    assert "Context:" in content
+    assert "Answer:" in content
+    assert "Dual-Mode Interrogation" in content
+
+
+def test_question_relay_protocol_in_skill():
+    skill_file = PLUGIN_ROOT / "skills" / "project-grooming" / "SKILL.md"
+    content = skill_file.read_text(encoding="utf-8")
+    assert "[QUESTION_RELAY_REQUEST]" in content
+    assert "[QUESTION_RELAY_RESPONSE]" in content
+    assert "Question Relay Protocol" in content
+    assert "Question:" in content
+    assert "Options:" in content
+    assert "Context:" in content
+    assert "Answer:" in content
+
+
+def test_question_relay_protocol_in_groom_agent():
+    agent_file = PLUGIN_ROOT / "agents" / "coding-groom" / "agent.md"
+    content = agent_file.read_text(encoding="utf-8")
+    assert "[QUESTION_RELAY_REQUEST]" in content
+    assert "[QUESTION_RELAY_RESPONSE]" in content
+    assert "Question:" in content
+    assert "Options:" in content
+    assert "Context:" in content
+    assert "Answer:" in content
+    assert "send_message" in content
+
+
+def test_question_relay_protocol_in_catalog():
+    agent_file = PLUGIN_ROOT / "agents" / "agent.md"
+    content = agent_file.read_text(encoding="utf-8")
+    assert "[QUESTION_RELAY_REQUEST]" in content
+    assert "[QUESTION_RELAY_RESPONSE]" in content
+    assert "send_message" in content
