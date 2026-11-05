@@ -43,12 +43,44 @@ This rule set applies whenever the `agentic-project-grooming-plugin` is active i
 
 ## 3. Approval Gate & Artifact Protocol
 - **Artifact Authoring**: Synthesize all gathered requirements, architectural decisions, and gap remediation plans into `Project_Request_Grooming.md` in the session artifact directory (`<appDataDir>/brain/<conversation-id>/Project_Request_Grooming.md`).
-- **Sole and Final Tool Call Rule**:
-  - Writing `Project_Request_Grooming.md` using `write_file` with `ArtifactMetadata={"RequestFeedback": True, "UserFacing": True}` must be the **sole and final tool call** of that turn.
-  - Never batch secondary tool calls after authoring the artifact so Antigravity renders interactive Approve / Reject buttons.
-- **User Revision Loop**:
-  - If the user requests modifications or rejects the artifact, return to Section 2 (User Grilling) to clarify questions before regenerating `Project_Request_Grooming.md`.
-  - Scaffolding and delegation proceed **only** upon explicit approval (`[GATE_APPROVED]`).
+- **60-Second Timeout Mitigation**: When running as a background subagent, executing `write_file(RequestFeedback=True)` directly triggers a strict 60-second runtime execution timeout while waiting for human review. To prevent timeouts, subagents must never invoke interactive feedback gates directly when operating under a caller orchestrator.
+- **Dual-Mode Approval Gate Protocol**:
+  - **Subagent Mode (Caller ID Present)**:
+    1. Author `Project_Request_Grooming.md` directly to disk using `write_file(Path=..., Content=..., Overwrite=True)` omitting `ArtifactMetadata` or setting `RequestFeedback=False`.
+    2. Relay artifact approval request to parent caller (`caller_id`) via `send_message` with:
+       ```text
+       [ARTIFACT_APPROVAL_REQUEST]
+       ```
+       ```json
+       {
+         "type": "ARTIFACT_APPROVAL_REQUEST",
+         "artifact_name": "Project_Request_Grooming.md",
+         "artifact_path": "<appDataDir>/brain/<conversation-id>/Project_Request_Grooming.md",
+         "stage": "GROOMING",
+         "summary": "Detailed project request grooming and scoping specification",
+         "user_facing": true
+       }
+       ```
+    3. Enter idle state and await reactive wakeup upon receiving caller response:
+       ```text
+       [ARTIFACT_APPROVAL_RESPONSE]
+       ```
+       ```json
+       {
+         "type": "ARTIFACT_APPROVAL_RESPONSE",
+         "artifact_name": "Project_Request_Grooming.md",
+         "status": "APPROVED",
+         "feedback": ""
+       }
+       ```
+    4. If approved (`status: "APPROVED"`), advance immediately to Section 4 (Cross-Plugin Scaffolding & Delegation).
+    5. If rejected (`status: "REJECTED"`), review caller feedback and return to Section 2 (User Grilling) to clarify requested revisions before regenerating.
+  - **Standalone Mode (Direct Interactive Execution)**:
+    - Author `Project_Request_Grooming.md` directly using `write_file` with `ArtifactMetadata={"RequestFeedback": True, "UserFacing": True, "Summary": "..."}` as the **sole and final tool call** of that turn.
+    - Never batch secondary tool calls after authoring the artifact so Antigravity renders interactive Approve / Reject buttons.
+    - User Revision Loop:
+      - If the user requests modifications or rejects the artifact, return to Section 2 (User Grilling) to clarify questions before regenerating `Project_Request_Grooming.md`.
+      - Scaffolding and delegation proceed **only** upon explicit approval (`[GATE_APPROVED]`).
 
 ---
 

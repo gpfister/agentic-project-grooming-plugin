@@ -17,7 +17,7 @@ flowchart TD
     Step1 --> Step2["Step 2: Consistency & User Grilling<br/>(Strictly one question at a time across 7 dimensions<br/>Direct ask_question or Question Relay Protocol)"]
     Step2 --> MoreQuestions{"Ambiguities or<br/>Gaps Remaining?"}
     MoreQuestions -->|"Yes"| Step2
-    MoreQuestions -->|"No"| Step3["Step 3: Approval Gate Artifact<br/>(Write Project_Request_Grooming.md<br/>RequestFeedback=True, sole tool call)"]
+    MoreQuestions -->|"No"| Step3["Step 3: Approval Gate Artifact<br/>(Write Project_Request_Grooming.md<br/>Direct feedback or Artifact Approval Relay)"]
     Step3 --> UserGate{"User Approval<br/>Gate"}
     UserGate -->|"Changes Requested / Rejected"| Step2
     UserGate -->|"Approved"| Step4["Step 4: Scaffolding & Delegation"]
@@ -124,21 +124,60 @@ Continue grilling one question at a time until all 7 dimensions are fully clarif
 ### Step 3: Approval Gate Artifact (`Project_Request_Grooming.md`)
 Synthesize the complete groomed specification into a formal artifact.
 
-1. **Author the Artifact**:
-   - Write `Project_Request_Grooming.md` into `<appDataDir>/brain/<conversation-id>/Project_Request_Grooming.md`.
-   - Include standard sections:
-     - **Executive Summary & Identification**: Name, tagline, problem statement.
-     - **Goals & User Journeys**: Target personas, key capabilities, acceptance criteria.
-     - **Architecture & Technical Standards**: Runtimes, frameworks, constraints.
-     - **Repository Topology**: Git structure, sub-repos, branch strategy.
-     - **Licensing & Copyright**: License type, copyright owner.
-     - **Documentation & Vault Strategy**: Obsidian layout, ADR conventions.
-     - **Tooling & Task Automation**: Makefile commands, test harnesses, linters.
-     - **Scaffolding Implementation Plan**: Step-by-step execution roadmap.
-2. **Strict Gate Tool Call Rule**:
-   - The tool call `write_file` with `ArtifactMetadata={"RequestFeedback": True, "UserFacing": True, "Summary": "..."}` must be the **sole and final tool call** of that turn.
-   - Do NOT batch any other tool calls (e.g., `run_command` or secondary `write_file`) in the same turn.
-3. **Await User Approval Gate**:
+#### 1. Content of the Artifact
+Write `Project_Request_Grooming.md` into `<appDataDir>/brain/<conversation-id>/Project_Request_Grooming.md` including standard sections:
+- **Executive Summary & Identification**: Name, tagline, problem statement.
+- **Goals & User Journeys**: Target personas, key capabilities, acceptance criteria.
+- **Architecture & Technical Standards**: Runtimes, frameworks, constraints.
+- **Repository Topology**: Git structure, sub-repos, branch strategy.
+- **Licensing & Copyright**: License type, copyright owner.
+- **Documentation & Vault Strategy**: Obsidian layout, ADR conventions.
+- **Tooling & Task Automation**: Makefile commands, test harnesses, linters.
+- **Scaffolding Implementation Plan**: Step-by-step execution roadmap.
+
+#### 2. Dual-Mode Approval Gate Execution
+
+To eliminate runtime 60-second execution timeouts caused by background subagents executing `write_file(RequestFeedback=True)`, project grooming supports two approval gate modes:
+
+##### A. Delegated Subagent Mode (Artifact Approval Relay Protocol)
+When operating as a delegated subagent under a caller orchestrator (e.g., `@coding`):
+1. **Write to Disk**: Author `Project_Request_Grooming.md` directly using `write_file(Path=..., Content=..., Overwrite=True)` omitting `ArtifactMetadata` or setting `RequestFeedback=False`.
+2. **Relay Approval Request**: Dispatch `[ARTIFACT_APPROVAL_REQUEST]` to `caller_id` via `send_message`:
+   ```text
+   [ARTIFACT_APPROVAL_REQUEST]
+   ```
+   ```json
+   {
+     "type": "ARTIFACT_APPROVAL_REQUEST",
+     "artifact_name": "Project_Request_Grooming.md",
+     "artifact_path": "<appDataDir>/brain/<conversation-id>/Project_Request_Grooming.md",
+     "stage": "GROOMING",
+     "summary": "Detailed project request grooming and scoping specification",
+     "user_facing": true
+   }
+   ```
+3. **Idle & Reactive Wakeup**: Enter idle state and await user decision relayed from caller. The orchestrator presents the interactive approval gate at the session root without background execution timeouts.
+4. **Process Response Envelope**:
+   ```text
+   [ARTIFACT_APPROVAL_RESPONSE]
+   ```
+   ```json
+   {
+     "type": "ARTIFACT_APPROVAL_RESPONSE",
+     "artifact_name": "Project_Request_Grooming.md",
+     "status": "APPROVED",
+     "feedback": ""
+   }
+   ```
+5. **Handle Gate Outcome**:
+   - **If Approved (`status: "APPROVED"`)**: Advance immediately to Step 4 (Scaffolding & Delegation).
+   - **If Rejected (`status: "REJECTED"`)**: Review feedback and return to Step 2 to grill and clarify the requested modifications before regenerating the artifact.
+
+##### B. Standalone Root Agent Mode
+When running directly as the root conversational agent with the user:
+1. **Sole & Final Tool Call**: Author `Project_Request_Grooming.md` using `write_file` with `ArtifactMetadata={"RequestFeedback": True, "UserFacing": True, "Summary": "..."}` as the **sole and final tool call** of that turn.
+2. **No Batching**: Never batch secondary tool calls (e.g., `run_command` or secondary `write_file`) in the same turn so Antigravity renders interactive Approve / Reject buttons.
+3. **Handle User Decision**:
    - **If Approved (`[GATE_APPROVED]`)**: Advance immediately to Step 4 (Scaffolding & Delegation).
    - **If Rejected or Comments Provided**: Acknowledge the feedback and return to Step 2 to grill and clarify the specific modification requests before regenerating the artifact.
 

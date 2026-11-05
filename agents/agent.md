@@ -33,7 +33,7 @@ agents/
 
 | Agent Handle | Directory | `enable_write_tools` | `enable_subagent_tools` | `enable_mcp_tools` | Allowed Tools | Description |
 | :--- | :--- | :---: | :---: | :---: | :--- | :--- |
-| **`@coding-groom`** | [`agents/coding-groom/`](file:///Users/gpfister/Development/Projects/gpfister/agentic/agentic-project-grooming-plugin/agents/coding-groom/) | `True` | `True` | `True` | `read_file`, `list_dir`, `run_command`, `ask_question`, `write_file`, `invoke_subagent`, `send_message` | Interactive project grooming specialist auditing repositories, grilling users one question at a time across 7 dimensions (via direct `ask_question` when standalone, or Question Relay Protocol `[QUESTION_RELAY_REQUEST]` / `[QUESTION_RELAY_RESPONSE]` when delegated), writing `Project_Request_Grooming.md` approval artifacts, and delegating scaffolding to `@coding` and `@coding-document`. |
+| **`@coding-groom`** | [`agents/coding-groom/`](file:///Users/gpfister/Development/Projects/gpfister/agentic/agentic-project-grooming-plugin/agents/coding-groom/) | `True` | `True` | `True` | `read_file`, `list_dir`, `run_command`, `ask_question`, `write_file`, `invoke_subagent`, `send_message` | Interactive project grooming specialist auditing repositories, grilling users one question at a time across 7 dimensions (via direct `ask_question` when standalone, or Question Relay Protocol `[QUESTION_RELAY_REQUEST]` / `[QUESTION_RELAY_RESPONSE]` when delegated), authoring `Project_Request_Grooming.md` approval artifacts (relayed via `[ARTIFACT_APPROVAL_REQUEST]` / `[ARTIFACT_APPROVAL_RESPONSE]` when delegated under a caller orchestrator, or direct interactive `write_file` with `RequestFeedback=True` when standalone), and delegating scaffolding to `@coding` and `@coding-document`. |
 
 ---
 
@@ -46,8 +46,10 @@ Gap Analysis (Step 1) ──> User Grilling (Step 2) ─────────
                                   ▲                                             │
                                   │                                             ▼
                               (Revisions) <────────────── Write Project_Request_Grooming.md (Step 3)
+                                                           (Standalone: write_file RequestFeedback=True)
+                                                           (Subagent: [ARTIFACT_APPROVAL_REQUEST] via send_message)
                                                                                 │
-                                                                         [Gate Approved]
+                                                                   [ARTIFACT_APPROVAL_RESPONSE: APPROVED]
                                                                                 ▼
                                                                    Scaffolding Delegation (Step 4)
                                                                    ├── @coding (scaffolding code/repos)

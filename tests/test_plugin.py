@@ -140,3 +140,42 @@ def test_question_relay_protocol_in_catalog():
     assert "[QUESTION_RELAY_REQUEST]" in content
     assert "[QUESTION_RELAY_RESPONSE]" in content
     assert "send_message" in content
+
+
+def test_artifact_approval_relay_in_rules():
+    rules_file = PLUGIN_ROOT / "rules" / "AGENTS.md"
+    content = rules_file.read_text(encoding="utf-8")
+    assert "[ARTIFACT_APPROVAL_REQUEST]" in content
+    assert "[ARTIFACT_APPROVAL_RESPONSE]" in content
+    assert "Project_Request_Grooming.md" in content
+    assert "send_message" in content
+    assert "Dual-Mode Approval Gate Protocol" in content
+
+
+def test_artifact_approval_relay_in_skill():
+    skill_file = PLUGIN_ROOT / "skills" / "project-grooming" / "SKILL.md"
+    content = skill_file.read_text(encoding="utf-8")
+    assert "[ARTIFACT_APPROVAL_REQUEST]" in content
+    assert "[ARTIFACT_APPROVAL_RESPONSE]" in content
+    assert "Project_Request_Grooming.md" in content
+    assert "send_message" in content
+    assert "Artifact Approval Relay Protocol" in content
+
+
+def test_artifact_approval_relay_in_groom_agent():
+    agent_file = PLUGIN_ROOT / "agents" / "coding-groom" / "agent.md"
+    content = agent_file.read_text(encoding="utf-8")
+    assert "[ARTIFACT_APPROVAL_REQUEST]" in content
+    assert "[ARTIFACT_APPROVAL_RESPONSE]" in content
+    assert "Project_Request_Grooming.md" in content
+    assert "send_message" in content
+    assert "Artifact Approval Relay Protocol" in content
+
+
+def test_artifact_approval_relay_in_catalog():
+    agent_file = PLUGIN_ROOT / "agents" / "agent.md"
+    content = agent_file.read_text(encoding="utf-8")
+    assert "[ARTIFACT_APPROVAL_REQUEST]" in content
+    assert "[ARTIFACT_APPROVAL_RESPONSE]" in content
+    assert "Project_Request_Grooming.md" in content
+

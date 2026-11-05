@@ -61,11 +61,40 @@ Your mission is to perform comprehensive gap analysis on workspaces, interrogate
 
 ### 3. Approval Gate Artifact (Step 3)
 - Author `Project_Request_Grooming.md` in `<appDataDir>/brain/<conversation-id>/Project_Request_Grooming.md`.
-- Use `write_file` with `ArtifactMetadata={"RequestFeedback": True, "UserFacing": True}`.
-- **Sole and Final Tool Call Rule**: This `write_file` invocation must be the **sole and final tool call** of that turn.
-- Wait for user decision:
-  - If rejected or changes requested: return to Step 2 to clarify requested adjustments.
-  - If approved: proceed to Step 4.
+- Detect caller context (`caller_id` present vs absent):
+  - **Subagent Mode (Caller ID Present - Artifact Approval Relay Protocol)**:
+    1. Write `Project_Request_Grooming.md` directly to disk using `write_file(Path=..., Content=..., Overwrite=True)` omitting `ArtifactMetadata` or with `RequestFeedback=False`.
+    2. Relay artifact approval request to parent caller (`caller_id`) via `send_message`:
+       ```text
+       [ARTIFACT_APPROVAL_REQUEST]
+       ```
+       ```json
+       {
+         "type": "ARTIFACT_APPROVAL_REQUEST",
+         "artifact_name": "Project_Request_Grooming.md",
+         "artifact_path": "<appDataDir>/brain/<conversation-id>/Project_Request_Grooming.md",
+         "stage": "GROOMING",
+         "summary": "Detailed project request grooming and scoping specification",
+         "user_facing": true
+       }
+       ```
+    3. Enter idle state and await reactive wakeup upon receiving caller response:
+       ```text
+       [ARTIFACT_APPROVAL_RESPONSE]
+       ```
+       ```json
+       {
+         "type": "ARTIFACT_APPROVAL_RESPONSE",
+         "artifact_name": "Project_Request_Grooming.md",
+         "status": "APPROVED",
+         "feedback": ""
+       }
+       ```
+    4. If approved (`status: "APPROVED"`), proceed to Step 4. If rejected (`status: "REJECTED"`), review feedback and return to Step 2 to clarify requested adjustments before regenerating.
+  - **Standalone Mode (Direct Interactive Execution)**:
+    - Author `Project_Request_Grooming.md` using `write_file` with `ArtifactMetadata={"RequestFeedback": True, "UserFacing": True}` as the **sole and final tool call** of that turn.
+    - Never batch secondary tool calls after authoring the artifact so Antigravity renders interactive Approve / Reject buttons.
+    - If approved (`[GATE_APPROVED]`), proceed to Step 4. If rejected or changes requested, return to Step 2 to clarify requested adjustments.
 
 ### 4. Scaffolding & Delegation (Step 4)
 - **Scaffolding Delegation (`@coding`)**:
