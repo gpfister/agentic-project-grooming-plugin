@@ -24,13 +24,13 @@ flowchart TD
     
     Step4 --> CodingCheck{"agentic-coding-plugin<br/>installed?"}
     CodingCheck -->|"Yes"| InvokeCoding["Invoke @coding<br/>(Scaffold repos, Makefile, scripts, code)"]
-    CodingCheck -->|"No"| FallbackCoding["Local Scaffolding Fallback<br/>(Direct file generation)"]
+    CodingCheck -->|"No"| FallbackCoding["Local Scaffolding Fallback<br/>(Manual scaffolding guidance)"]
     
     InvokeCoding --> DocCheck{"agentic-project-documenting-plugin<br/>installed?"}
     FallbackCoding --> DocCheck
     
     DocCheck -->|"Yes"| InvokeDoc["Invoke @coding-document<br/>(Init Obsidian vault, architecture notes, ADRs)"]
-    DocCheck -->|"No"| FallbackDoc["Local Documentation Fallback<br/>(Generate markdown docs)"]
+    DocCheck -->|"No"| FallbackDoc["Local Documentation Fallback<br/>(Manual documentation guidance)"]
     
     InvokeDoc --> Completed(["Grooming & Scaffolding Completed"])
     FallbackDoc --> Completed
@@ -198,8 +198,8 @@ Once `Project_Request_Grooming.md` is approved, execute or delegate scaffolding 
     )
     ```
 - **If Not Installed (Local Fallback)**:
-  - Generate the approved repository topology locally using `run_command` and `write_file`.
-  - Create `.gitignore`, `LICENSE`, `Makefile`, and base config files directly.
+  - **Do NOT** use `write_file` or `run_command` to create or modify repository files directly (`@coding-develop` holds exclusive code-change authority; `write_file` is restricted strictly to `<appDataDir>/brain/<conversation-id>/Project_Request_Grooming.md` and `run_command` is strictly read-only).
+  - Output manual scaffolding guidance—including exact shell commands and file templates for `.gitignore`, `LICENSE`, `Makefile`, and base config files—in chat or within `Project_Request_Grooming.md`.
 
 #### 2. Documentation Delegation (`@coding-document`)
 - **Detection**: Check if `agentic-project-documenting-plugin` is installed in the workspace.
@@ -213,7 +213,8 @@ Once `Project_Request_Grooming.md` is approved, execute or delegate scaffolding 
     )
     ```
 - **If Not Installed (Local Fallback)**:
-  - Create standard markdown documentation directly under `docs/` or `<project>-obsidian/` with initial architecture notes and ADR templates.
+  - **Do NOT** write files inside repository directories.
+  - Provide manual documentation guidance and markdown templates (for `docs/` or `<project>-obsidian/` architecture notes and ADRs) in chat or within `Project_Request_Grooming.md`.
 
 ---
 
