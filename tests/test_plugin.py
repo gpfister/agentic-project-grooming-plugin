@@ -179,3 +179,24 @@ def test_artifact_approval_relay_in_catalog():
     assert "[ARTIFACT_APPROVAL_RESPONSE]" in content
     assert "Project_Request_Grooming.md" in content
 
+
+def test_exclusive_code_change_authority_in_groom_agent():
+    agent_file = PLUGIN_ROOT / "agents" / "coding-groom" / "agent.md"
+    content = agent_file.read_text(encoding="utf-8")
+    fm_match = re.search(r"^---\s*\n(.*?)\n---", content, re.DOTALL)
+    assert fm_match is not None
+    assert "edit_file" not in fm_match.group(1)
+    assert "@coding-develop" in content
+    assert "write_file" in content
+    assert "run_command" in content
+
+
+def test_manual_scaffolding_fallback_in_skill_and_rules():
+    skill_content = (PLUGIN_ROOT / "skills" / "project-grooming" / "SKILL.md").read_text(encoding="utf-8")
+    rules_content = (PLUGIN_ROOT / "rules" / "AGENTS.md").read_text(encoding="utf-8")
+    assert "manual scaffolding guidance" in skill_content.lower()
+    assert "manual documentation guidance" in skill_content.lower()
+    assert "manual scaffolding guidance" in rules_content.lower()
+    assert "@coding-develop" in rules_content
+
+

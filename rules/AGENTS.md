@@ -14,6 +14,10 @@ This rule set applies whenever the `agentic-project-grooming-plugin` is active i
   - Workspace automation (`Makefile`, setup scripts, CI/CD workflows).
   - Code hygiene and linting configurations (`.gitignore`, `.editorconfig`, linters).
 - **No Premature Mutation**: Never alter repository files, scaffold code, or modify project structure prior to interactive clarification and explicit approval of `Project_Request_Grooming.md`.
+- **Exclusive Code-Change Authority & Tool Guardrails**: `@coding-develop` holds exclusive authority to modify repository source code, configuration files, and test suites. In `agentic-project-grooming-plugin`:
+  - `edit_file` is prohibited.
+  - `write_file` is restricted strictly to `<appDataDir>/brain/<conversation-id>/Project_Request_Grooming.md`.
+  - `run_command` is restricted strictly to read-only inspection (never create, overwrite, or mutate repository files).
 
 ---
 
@@ -89,11 +93,11 @@ When `Project_Request_Grooming.md` is approved, coordinate with companion plugin
 - **Scaffolding Delegation (`@coding`)**:
   - Check if `agentic-coding-plugin` is installed:
     - **Installed**: Invoke `@coding` via `invoke_subagent(TypeName="coding", Role="Coding Workflow Orchestrator", Prompt=...)` to generate repositories, Makefile, scripts, licensing, and boilerplate code according to the approved grooming artifact.
-    - **Not Installed**: Execute local fallback scaffolding directly or provide manual scaffolding guidance.
+    - **Not Installed**: Provide manual scaffolding guidance (exact shell commands and file templates in chat or within `Project_Request_Grooming.md`) instead of writing repository files directly.
 - **Documentation Archival Delegation (`@coding-document`)**:
   - Check if `agentic-project-documenting-plugin` is installed:
     - **Installed**: Invoke `@coding-document` via `invoke_subagent(TypeName="coding-document", Role="Documentation Specialist", Prompt=...)` to initialize the `<project>-obsidian/` knowledge vault, document architecture designs, and index initial ADRs.
-    - **Not Installed**: Generate local markdown documentation templates directly in the workspace.
+    - **Not Installed**: Provide manual documentation guidance and markdown templates in chat or within `Project_Request_Grooming.md` instead of writing files inside repository directories.
 
 ---
 
